@@ -1,0 +1,52 @@
+-- Database
+CREATE DATABASE IF NOT EXISTS kiosk_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE kiosk_db;
+
+-- Create roles table (fixed values)
+CREATE TABLE IF NOT EXISTS roles (
+	id INT PRIMARY KEY,
+	name VARCHAR(50) NOT NULL UNIQUE
+);
+INSERT IGNORE INTO roles (id, name) VALUES (1, 'superadmin'), (2, 'admin');
+
+-- Users
+CREATE TABLE IF NOT EXISTS users (
+	id INT AUTO_INCREMENT PRIMARY KEY,
+	username VARCHAR(100) NOT NULL UNIQUE,
+	password_hash VARCHAR(255) NOT NULL,
+	role_id INT NOT NULL,
+	suspended TINYINT(1) NOT NULL DEFAULT 0,
+	date_added DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	FOREIGN KEY (role_id) REFERENCES roles(id)
+);
+
+-- Products
+CREATE TABLE IF NOT EXISTS products (
+	id INT AUTO_INCREMENT PRIMARY KEY,
+	name VARCHAR(255) NOT NULL,
+	price DECIMAL(10,2) NOT NULL,
+	image_url VARCHAR(1024) NULL,
+	added_by INT NULL,
+	date_added DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	FOREIGN KEY (added_by) REFERENCES users(id)
+);
+
+-- Orders
+CREATE TABLE IF NOT EXISTS orders (
+	id INT AUTO_INCREMENT PRIMARY KEY,
+	total_amount DECIMAL(10,2) NOT NULL DEFAULT 0,
+	payment_method VARCHAR(50) NULL,
+	date_added DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Order items
+CREATE TABLE IF NOT EXISTS order_items (
+	id INT AUTO_INCREMENT PRIMARY KEY,
+	order_id INT NOT NULL,
+	product_name VARCHAR(255) NOT NULL,
+	unit_price DECIMAL(10,2) NOT NULL,
+	quantity INT NOT NULL,
+	line_total DECIMAL(10,2) NOT NULL,
+	date_added DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+	FOREIGN KEY (order_id) REFERENCES orders(id) ON DELETE CASCADE
+);
