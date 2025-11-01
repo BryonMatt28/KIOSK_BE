@@ -1,0 +1,23 @@
+# PHP
+*.log
+.htaccess.local
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment files (if you create one later)
+.env
+.env.local
+
+# Temporary files
+*.tmp
+*.temp
+
