@@ -20,4 +20,9 @@ Thumbs.db
 # Temporary files
 *.tmp
 *.temp
+*.zip~
+
+# Composer
+/vendor/
+vendor/composer/tmp-*
 

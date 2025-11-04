@@ -21,6 +21,7 @@ $rows = $mysqli->query("SELECT u.id, u.username, r.name role, u.suspended, u.dat
 			<div class="font-bold">Admin</div>
 			<div class="flex gap-2">
 				<a href="/KIOSK/public/index.php" class="px-3 py-1 bg-red-600 text-white rounded text-sm">Home</a>
+				<a href="/KIOSK/public/admin/dashboard.php" class="px-3 py-1 border rounded text-sm">Dashboard</a>
 				<a href="/KIOSK/public/admin/login.php" onclick="logout(); return false;" class="px-3 py-1 border rounded text-sm">Logout</a>
 			</div>
 		</div>
@@ -47,7 +48,11 @@ $rows = $mysqli->query("SELECT u.id, u.username, r.name role, u.suspended, u.dat
 					<td><?php echo htmlspecialchars($row['date_added']); ?></td>
 					<td>
 						<?php if ($row['role']==='admin'): ?>
-						<button class="text-sm underline" onclick="toggleSuspend(<?php echo (int)$row['id']; ?>, <?php echo (int)$row['suspended'] ? 'false':'true'; ?>)"><?php echo ((int)$row['suspended'] ? 'Unsuspend' : 'Suspend'); ?></button>
+						<div class="flex gap-2">
+							<button class="text-sm underline text-blue-600 hover:text-blue-800" onclick="toggleSuspend(<?php echo (int)$row['id']; ?>, <?php echo (int)$row['suspended'] ? 'false':'true'; ?>)"><?php echo ((int)$row['suspended'] ? 'Unsuspend' : 'Suspend'); ?></button>
+							<span class="text-gray-400">|</span>
+							<button class="text-sm underline text-red-600 hover:text-red-800" onclick="deleteUser(<?php echo (int)$row['id']; ?>, '<?php echo htmlspecialchars($row['username'], ENT_QUOTES); ?>')">Delete</button>
+						</div>
 						<?php endif; ?>
 					</td>
 				</tr>
@@ -67,6 +72,12 @@ $rows = $mysqli->query("SELECT u.id, u.username, r.name role, u.suspended, u.dat
 		async function toggleSuspend(id, suspend){
 			const res = await fetch('/KIOSK/public/api/users.php?id='+id, { method:'PATCH', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ suspended: suspend })});
 			if(!res.ok){ const e = await res.json(); alert(e.error||'Failed'); return; }
+			location.reload();
+		}
+		async function deleteUser(id, username){
+			if(!confirm(`Are you sure you want to delete the admin account "${username}"? This action cannot be undone.`)) return;
+			const res = await fetch('/KIOSK/public/api/users.php?id='+id, { method:'DELETE' });
+			if(!res.ok){ const e = await res.json(); alert(e.error||'Failed to delete user'); return; }
 			location.reload();
 		}
 		async function logout(){ await fetch('/KIOSK/public/api/logout.php'); window.location.href='/KIOSK/public/admin/login.php'; }

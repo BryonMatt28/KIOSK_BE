@@ -73,10 +73,6 @@ $DB_PORT = 3306;         // Change if using different port
    - Visit: http://localhost/KIOSK/public/admin/seed_products.php
    - This adds sample products to the database
 
-3. **Add Category Column (if needed):**
-   - Visit: http://localhost/KIOSK/public/admin/migrate_add_category.php
-   - This adds the category column to products table
-
 ## Project Structure
 
 ```
@@ -88,13 +84,18 @@ KIOSK_BE/
 │   │   ├── login.php
 │   │   ├── dashboard.php
 │   │   ├── products.php
+│   │   ├── reports.php
+│   │   ├── reports_pdf.php
+│   │   ├── pos.php
 │   │   ├── users.php
-│   │   └── reports.php
+│   │   ├── seed_products.php
+│   │   └── seed_superadmin.php
 │   ├── api/                    # API endpoints
 │   │   ├── login.php
 │   │   ├── logout.php
 │   │   ├── products.php
 │   │   ├── users.php
+│   │   ├── orders.php
 │   │   └── order_create.php
 │   ├── assets/
 │   │   └── style.css
@@ -112,8 +113,16 @@ KIOSK_BE/
 - `POST /api/login.php` - User login
 - `POST /api/logout.php` - User logout
 - `GET /api/products.php` - Get all products
+- `POST /api/products.php` - Create product (admin only)
+- `PATCH /api/products.php` - Update product (admin only)
+- `DELETE /api/products.php` - Delete product (admin only)
 - `GET /api/users.php` - Get users (admin only)
-- `POST /api/order_create.php` - Create new order
+- `POST /api/users.php` - Create admin user (superadmin only)
+- `PATCH /api/users.php` - Update user (suspend/unsuspend, superadmin only)
+- `DELETE /api/users.php` - Delete admin user (superadmin only)
+- `GET /api/orders.php` - Get orders (with optional status filter)
+- `PATCH /api/orders.php` - Update order status (admin only)
+- `POST /api/order_create.php` - Create new order (from kiosk)
 
 ## Notes
 

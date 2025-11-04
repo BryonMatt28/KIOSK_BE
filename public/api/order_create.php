@@ -16,8 +16,19 @@ foreach ($items as $it) {
 
 $mysqli->begin_transaction();
 try {
-	$stmt = $mysqli->prepare('INSERT INTO orders(total_amount, payment_method) VALUES (?, ?)');
-	$stmt->bind_param('ds', $total, $payment);
+	// Check if status column exists
+	$check = $mysqli->prepare("SELECT COUNT(*) AS n FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'orders' AND COLUMN_NAME = 'status'");
+	$check->execute();
+	$hasStatus = (int)$check->get_result()->fetch_assoc()['n'] > 0;
+	
+	if ($hasStatus) {
+		$stmt = $mysqli->prepare('INSERT INTO orders(total_amount, payment_method, status) VALUES (?, ?, ?)');
+		$status = 'pending';
+		$stmt->bind_param('dss', $total, $payment, $status);
+	} else {
+		$stmt = $mysqli->prepare('INSERT INTO orders(total_amount, payment_method) VALUES (?, ?)');
+		$stmt->bind_param('ds', $total, $payment);
+	}
 	$stmt->execute();
 	$orderId = $stmt->insert_id;
 

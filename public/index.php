@@ -15,7 +15,6 @@ session_start();
       <h1 class="text-3xl font-bold text-red-600">SavorBite</h1>
       <nav class="space-x-6">
         <a href="#about" class="text-gray-700 hover:text-red-600 transition">About</a>
-        <a href="#features" class="text-gray-700 hover:text-red-600 transition">Menu</a>
         <a href="/KIOSK/public/kiosk.php" class="bg-red-600 text-white px-6 py-2 rounded-full hover:bg-red-700 transition">Order Now</a>
         <a href="/KIOSK/public/admin/login.php" class="text-gray-700 hover:text-red-600 transition">Admin</a>
       </nav>

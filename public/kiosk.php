@@ -175,6 +175,7 @@
 
       let cart = [];
       let products = [];
+      let selectedPaymentMethod = null;
       const menuDiv = document.getElementById('menu');
       const categoryTitle = document.getElementById('categoryTitle');
       const cartList = document.getElementById('cart');
@@ -298,10 +299,61 @@
         let total = 0; Object.values(cartItemCounts).forEach(item => { const itemTotal = item.price * item.quantity; total += itemTotal; const itemDiv = document.createElement('div'); itemDiv.className = 'flex justify-between items-center mb-2'; itemDiv.innerHTML = `<div><span class="font-semibold">${item.name}</span><span class="text-gray-600 ml-2">x${item.quantity}</span></div><span class="font-bold">$${itemTotal.toFixed(2)}</span>`; orderSummaryContent.appendChild(itemDiv); });
         orderSummaryTotal.textContent = `$${total.toFixed(2)}`; orderSummaryModal.classList.remove('hidden'); }
 
-      function selectPaymentType(type) { if (type === 'counter') { closePaymentModal(); submitOrder(); } else if (type === 'online') { closePaymentModal(); openOnlinePaymentModal(); } }
-      async function submitOrder() { try { const items = cart.map(i => ({ name: i.name, price: i.price, quantity: 1 })); await fetch('/KIOSK/public/api/order_create.php', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ items }) }); } catch (e) {} showConfirmation(); cart = []; renderCart(); }
-      function showConfirmation() { orderSummaryModal.classList.add('hidden'); document.getElementById('paymentModal').classList.add('hidden'); document.getElementById('onlinePaymentModal').classList.add('hidden'); document.getElementById('confirmationModal').classList.remove('hidden'); }
-      function confirmOnlinePayment() { const selectedMethod = document.querySelector('input[name="onlinePayment"]:checked'); if (selectedMethod) { closeOnlinePaymentModal(); submitOrder(); } else { alert('Please select a payment method'); } }
+      function selectPaymentType(type) { 
+        if (type === 'counter') { 
+          selectedPaymentMethod = 'Pay at Counter';
+          closePaymentModal(); 
+          submitOrder(); 
+        } else if (type === 'online') { 
+          closePaymentModal(); 
+          openOnlinePaymentModal(); 
+        } 
+      }
+      
+      async function submitOrder() { 
+        try { 
+          const items = cart.map(i => ({ name: i.name, price: i.price, quantity: 1 })); 
+          await fetch('/KIOSK/public/api/order_create.php', { 
+            method: 'POST', 
+            headers: { 'Content-Type': 'application/json' }, 
+            body: JSON.stringify({ 
+              items, 
+              payment_method: selectedPaymentMethod || null 
+            }) 
+          }); 
+        } catch (e) {
+          console.error('Order submission error:', e);
+        } 
+        showConfirmation(); 
+        cart = []; 
+        selectedPaymentMethod = null;
+        renderCart(); 
+      }
+      
+      function showConfirmation() { 
+        orderSummaryModal.classList.add('hidden'); 
+        document.getElementById('paymentModal').classList.add('hidden'); 
+        document.getElementById('onlinePaymentModal').classList.add('hidden'); 
+        document.getElementById('confirmationModal').classList.remove('hidden'); 
+      }
+      
+      function confirmOnlinePayment() { 
+        const selectedMethod = document.querySelector('input[name="onlinePayment"]:checked'); 
+        if (selectedMethod) { 
+          const methodValue = selectedMethod.value;
+          // Map the value to a readable name
+          const methodNames = {
+            'creditCard': 'Credit Card',
+            'paymaya': 'Paymaya',
+            'gcash': 'Gcash'
+          };
+          selectedPaymentMethod = methodNames[methodValue] || methodValue;
+          closeOnlinePaymentModal(); 
+          submitOrder(); 
+        } else { 
+          alert('Please select a payment method'); 
+        } 
+      }
       function closePaymentModal() { document.getElementById('paymentModal').classList.add('hidden'); }
       function openOnlinePaymentModal() { document.getElementById('onlinePaymentModal').classList.remove('hidden'); }
       function closeOnlinePaymentModal() { document.getElementById('onlinePaymentModal').classList.add('hidden'); }

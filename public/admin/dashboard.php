@@ -66,7 +66,12 @@ $kpi['total_admins'] = (int)$res->fetch_assoc()['n'];
 
 		<div class="mt-8">
 			<h2 class="text-lg font-semibold mb-4">Modules</h2>
-			<div class="grid md:grid-cols-3 gap-4">
+			<div class="grid md:grid-cols-4 gap-4">
+				<a href="/KIOSK/public/admin/pos.php" class="block bg-white rounded-xl shadow p-6 hover:shadow-lg transition">
+					<div class="text-3xl mb-2">🛒</div>
+					<div class="text-xl font-bold mb-1">POS</div>
+					<div class="text-gray-600 text-sm">Receive and manage orders</div>
+				</a>
 				<a href="/KIOSK/public/admin/products.php" class="block bg-white rounded-xl shadow p-6 hover:shadow-lg transition">
 					<div class="text-3xl mb-2">📦</div>
 					<div class="text-xl font-bold mb-1">Products</div>
